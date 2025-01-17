@@ -126,7 +126,7 @@ const removePlayer = async (playerId) => {
  * @param {Object[]} playerList - an array of player objects
  */
 
-//TODO
+//TODO.
 
 const renderAllPlayers = (playerList) => {
   const main = document.querySelector('main');
