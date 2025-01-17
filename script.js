@@ -3,7 +3,7 @@
 const cohortName = "2409-GHP-ET-WEB-PT";
 const API_URL = `https://fsa-puppy-bowl.herokuapp.com/api/${cohortName}`;
 
-// === State ===
+// === State ===!
 
 const state = {
   players: [],
