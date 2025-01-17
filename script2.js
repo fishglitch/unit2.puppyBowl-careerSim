@@ -1,15 +1,7 @@
 // Use the API_URL variable to make fetch requests to the API.
 // Replace the placeholder with your cohort name (ex: 2109-UNF-HY-WEB-PT)
 const cohortName = "2409-GHP-ET-WEB-PT";
-const API_URL = `https://fsa-puppy-bowl.herokuapp.com/api/${cohortName}`;
-
-// === State ===
-
-const state = {
-  players: [],
-  player: {},
-  teams: [],
-};
+const API_URL = `https://fsa-puppy-bowl.herokuapp.com/api/2409-GHP-ET-WEB-PT`;
 
 /**
  * Fetches all players from the API.
@@ -18,11 +10,10 @@ const state = {
 const fetchAllPlayers = async () => {
   try {
     // TODO
-    const response = await fetch(`${API_URL}/players`);
+    const response = await fetch(
+      `${API_URL}/players`
+    );
     const result = await response.json();
-    if (!response.success){
-      throw response.error;
-    }
     return result;
   } catch (err) {
     console.error("Uh oh, trouble fetching players!", err);
@@ -52,37 +43,24 @@ const fetchSinglePlayer = async (playerId) => {
  * @returns {Object} the player returned by the API
  */
 const addNewPlayer = async (playerObj) => {
-  try {
+try {
     const response = await fetch(
-      `${API_URL}/players`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(playerObj),
+          `${API_URL}/players`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(playerObj),
+          }
+        );
+        const result = await response.json();
+        console.log("Player added:", result);
+        return result;
+      } catch (err) {
+        console.error("Oops, something went wrong with adding that player!", err);
       }
-    );
-    const result = await response.json();
-    console.log("Player added:", result);
-    return result;
-  } catch (err) {
-    console.error("Oops, something went wrong with adding that player!", err);
-  }
-  let form = document.querySelector("#new-player-form > form");
-  form.addEventListener("submit", async (event) => {
-    event.preventDefault();
-
-    let playerData = {
-      name: form.elements.name.value,
-      breed: form.elements.breed.value,
-    };
-    console.log("New Player Data:", playerData);
-
-    if (n)
-  })
-};
-
+    }
 /**
  * Removes a player from the roster via the API.
  * @param {number} playerId the ID of the player to remove
@@ -91,7 +69,7 @@ const removePlayer = async (playerId) => {
 
   try {
     const response = await fetch(
-      `${API_URL}` + "/players/1",
+      `${API_URL}players/`,
       {
         method: 'DELETE',
       }
@@ -125,29 +103,10 @@ const removePlayer = async (playerId) => {
  * Note: this function should replace the current contents of `<main>`, not append to it.
  * @param {Object[]} playerList - an array of player objects
  */
-
-//TODO
-
 const renderAllPlayers = (playerList) => {
-  const main = document.querySelector('main');
-  main.innerHTML = ''; // Clear previous content
-  if (playerList.length === 0) {
-    main.innerHTML = '<p>No players found.</p>';
-    return;
-  }
-
-  playerList.forEach(player => {
-    const playerCard = document.createElement('div');
-    playerCard.classList.add('player-card');
-    playerCard.innerHTML = `
-      <h3>${player.name}</h3>
-      <img src="${player.image}" alt="${player.name}" />
-      <button onclick="renderSinglePlayer(${player.id})">See details</button>
-      <button onclick="removePlayer(${player.id})">Remove from roster</button>
-    `;
-    main.appendChild(playerCard);
-  });
+  // TODO
 };
+
 /**
  * Updates `<main>` to display a single player.
  * The player is displayed in a card with the following information:
@@ -162,9 +121,7 @@ const renderAllPlayers = (playerList) => {
  * @param {Object} player an object representing a single player
  */
 const renderSinglePlayer = (player) => {
-
-  const main = document.querySelector('main');
-  main.innerHTML
+  // TODO
 };
 
 /**
@@ -173,52 +130,43 @@ const renderSinglePlayer = (player) => {
  * and then render all players to the DOM.
  */
 const renderNewPlayerForm = () => {
-  const form = document.getElementById("new-player-form");
-  form.innerHTML = `
-    <label for="name"> Name: </label>
-    <input type="text" name="name" required>
-    <label for="breed"> Breed: </label>
-    <input type="text" name="breed" required>
-    <button type="submit">Submit</button>
-  `;
+  try {
+    // TODO
 
-  form.onsubmit = async (event) => {
-    event.preventDefault(); // Prevent default form submission
-    const formData = new FormData(form);
-    const playerObj = {
-      name: formData.get('name'),
-      breed: formData.get('breed')
-    };
-    await addNewPlayer(playerObj);
-    const players = await fetchAllPlayers(); // Fetch latest players
-    renderAllPlayers(players); // Render updated players
-  };
+    //grab the form from the html via the DOM
+    const form = document.getElementById("new-player-form");
+    //on submit of the form, add event listener that will grab the data
+    //from the form, and construct a player object and send that player object as 
+    //an argument to the addNewPlayer function
+
+  } catch (err) {
+    console.error("Uh oh, trouble rendering the new player form!", err);
+  }
 };
-
 
 /**
  * Initializes the app by fetching all players and rendering them to the DOM.
  */
 const init = async () => {
   const players = await fetchAllPlayers();
-            renderAllPlayers(players);
+  renderAllPlayers(players);
 
-            renderNewPlayerForm();
+  renderNewPlayerForm();
 };
 
-            // This script will be run using Node when testing, so here we're doing a quick
-            // check to see if we're in Node or the browser, and exporting the functions
-            // we want to test if we're in Node.
-            if (typeof window === "undefined") {
-              module.exports = {
-                fetchAllPlayers,
-                fetchSinglePlayer,
-                addNewPlayer,
-                removePlayer,
-                renderAllPlayers,
-                renderSinglePlayer,
-                renderNewPlayerForm,
-              };
+// This script will be run using Node when testing, so here we're doing a quick
+// check to see if we're in Node or the browser, and exporting the functions
+// we want to test if we're in Node.
+if (typeof window === "undefined") {
+  module.exports = {
+    fetchAllPlayers,
+    fetchSinglePlayer,
+    addNewPlayer,
+    removePlayer,
+    renderAllPlayers,
+    renderSinglePlayer,
+    renderNewPlayerForm,
+  };
 } else {
-              init();
+  init();
 }

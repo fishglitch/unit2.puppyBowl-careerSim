@@ -1,5 +1,90 @@
-*{
+* {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
+}
+
+
+* {
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif
+  font-weight: 400;
+}
+
+.header {
+  padding: 1vw;
+}
+
+h1 {
+  text-align: center;
+  color: rgb(16, 16, 16);
+}
+
+body {
+  margin: 20px 5%; /* Adjusted the side margins to be responsive */
+  background-image: linear-gradient(
+    rgb(155, 221, 245),
+    white,
+    rgb(155, 221, 245)
+  );
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 3px;
+  margin-bottom: 15px;
+  width: 100%; /* Changed to 100% for responsiveness */
+}
+
+form input {
+  margin-bottom: 7px;
+}
+
+form input,
+form label,
+form button {
+  width: 100%;
+  max-width: 400px; /* Added max-width for better usability */
+}
+
+article {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-evenly;
+  gap: 10px;
+  margin: 0 auto; /* Center content */
+}
+
+section {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 2px solid rgb(3, 5, 103);
+  border-radius: 10px;
+  width: 100%; /* Changed to 100% for responsiveness */
+  max-width: 300px; /* Added max-width to ensure sections don't stretch too much */
+  padding: 15px;
+  margin: 10px;
+}
+
+img {
+  max-width: 100%;
+  height: auto; /* Ensures images maintain aspect ratio */
+  border-radius: 50%;
+  margin: auto; /* Centers the image */
+  padding: 10px; /* Less padding to fit the design */
+}
+
+/* Media query for better responsiveness on smaller screens */
+@media (max-width: 600px) {
+  body {
+    margin: 10px; /* Reduced margin on smaller screens */
+  }
+
+  section {
+    width: 100%; /* Sections take full width on small screens */
+    max-width: none; /* Removes max-width on small screens */
+  }
 }
