@@ -12,7 +12,6 @@ const state = {
 
 // === REFERENCES ===
 const form = document.getElementById("new-player-form");
-const main = document.getElementById("playerList"); // <main><article>
 
 /** === FETCH ALL PLAYERS FROM API ===
  * @returns {Object[]} the array of player objects
@@ -23,14 +22,21 @@ const fetchAllPlayers = async () => {
     // why do we nest if throw in try catch?
     const response = await fetch(`${API_URL}/players`);
     const result = await response.json();
-    // console.log(result); // this fetches the sample response in the API
+    console.log("fetched result", result); // this fetches the sample response in the API
 
     if (!response.ok) {
       // what is diff bet response.ok and success?
-      throw new Error(result.error);
+      throw new Error(result.error || "Failed to fetch players");
     }
-    state.players = result.players; // returns the array that has puppy data
-    renderAllPlayers();
+
+    state.players = result.data.players; // returns the array that has puppy data
+    // result.data.players works. bc state assignment
+    // return response.data.players; // does not work
+
+    console.log("Players to render:", state.players);
+
+    // renderAllPlayers();
+    // return state.players;
   } catch (err) {
     console.error("Uh oh, trouble fetching players!", err);
   }
@@ -70,17 +76,17 @@ const addNewPlayer = async (playerObj) => {
       body: JSON.stringify(playerObj),
     });
 
-    if (!response.ok){
-      throw new Error ("Cannot add new player", error);
+    if (!response.ok) {
+      throw new Error("Cannot add new player", error);
     }
-    
+
     await fetchAllPlayers();
   } catch (err) {
     console.error("Oops, something went wrong with adding that player!", err);
   }
 };
 
-/** === REMOVE SINGLE PLAYER FROM ROSTER VIA API === 
+/** === REMOVE SINGLE PLAYER FROM ROSTER VIA API ===
  * @param {number} playerId the ID of the player to remove
  */
 const removePlayer = async (playerId) => {
@@ -108,7 +114,6 @@ const removePlayer = async (playerId) => {
 
 // EVENT LISTENER here?
 
-
 // == RENDERS ===
 /** === RENDER ALL PLAYERS <main> ===
  * Updates `<main>` to display a list of all players.
@@ -128,39 +133,59 @@ const removePlayer = async (playerId) => {
  *
  * Note: this function should replace the current contents of `<main>`, not append to it.
  * @param {Object[]} playerList - an array of player objects
- * 
+ *
  * fishglitch's notes:
  * <main> is the main content of the page
  * <article> is a specific self contained piece of content
  * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/article
  */
 
-const renderAllPlayers = () => {
-  main.innerHTML = ""; // Clear previous content
-  
-  if (state.players.length === 0) {
-    main.innerHTML = "<p>No players found.</p>";
+// borrowed line below from REFERENCE section to help complete function below
+const playerList = document.getElementById("playerList"); // <main><article>
+const playerCard = document.createElement("playerCardArea");
+
+function renderAllPlayers(players) {
+  playerList.innerHTML = ""; // Clear previous content
+
+  if (!state.players || state.players.length === 0) {
+    playerList.innerHTML = "<p>No players found :(</p>";
     return;
   }
-  const playersHTML = state.players
-    .map(
-      (player) => `
-      <li>
-        <div>
-          <h1>${player.name}</h1>
-          <h2>${player.breed}</h2>
-          <p>${player.status}</p>
-          <p>${player.team}</p>
-          <button id="${player.id}" onclick="deletePlayer(${player.id})">Delete!</button>
-        </div>
-      </li>
-    `
-    )
-    .join("");
 
-  main.innerHTML = playersHTML;
-};
+  const playersHTML = state.players.map(player => {
+    console.log("map", player);
   
+    playerCard.innerHTML = `
+      <div>
+        <h1>${player.name}</h1>
+        <p>Player ID: ${player.id}</p>
+      </div>
+    `;
+
+    playerList.append(playerCard);
+    console.log("Card", playerCard.innerHTML);
+
+    // const image = document.createElement("img");
+    // image.src = player.imageUrl;
+    //playerCard.append(image);
+
+    // eventListener for DETAILS
+
+    const buttonDetails = document.createElement("button");
+    buttonDetails.innerText = "Player Details";
+    playerCard.appendChild(buttonDetails);
+    buttonDetails.addEventListener("click", async () => {
+      await fetchSinglePlayer(player.id);
+      renderSinglePlayer(state.player);
+      return playerCard;
+    });
+
+    playerList.innerHTML = playersHTML;
+
+    console.log("Players rendered:", playersHTML);
+  });
+};
+
 /* junk code to review if needed
   // 
   // playerList.forEach((player) => {
@@ -189,29 +214,25 @@ const renderAllPlayers = () => {
  * @param {Object} player an object representing a single player
  */
 const renderSinglePlayer = (player) => {
-//   const details = document.createElement("section");
-//   details.innerHTML = `
-//   <h3>${player.name}</h3>
-//    <p>Player ID: ${player.id} </p>
-//     <p>Player Status: ${player.status}<p>
-//     <p>Team ID: ${player.teamId}</p>
-   
-// `;
-
-//   // Image Set Up:
-//   const image = document.createElement("img");
-//   //set the img src to be the imageUrl from the player object
-//   image.src = player.imageUrl;
-//   image.style.width = "50%";
-//   image.style.height = "50%";
-//   details.append(image);
-
-//   const backButton = document.createElement("button");
-//   backButton.innerText = "Back to Roster";
-//   details.append(backButton);
-//   backButton.addEventListener("click", () => render());
-
-//   playerList.replaceChildren(details);
+  //   const details = document.createElement("section");
+  //   details.innerHTML = `
+  //   <h3>${player.name}</h3>
+  //    <p>Player ID: ${player.id} </p>
+  //     <p>Player Status: ${player.status}<p>
+  //     <p>Team ID: ${player.teamId}</p>
+  // `;
+  //   // Image Set Up:
+  //   const image = document.createElement("img");
+  //   //set the img src to be the imageUrl from the player object
+  //   image.src = player.imageUrl;
+  //   image.style.width = "50%";
+  //   image.style.height = "50%";
+  //   details.append(image);
+  //   const backButton = document.createElement("button");
+  //   backButton.innerText = "Back to Roster";
+  //   details.append(backButton);
+  //   backButton.addEventListener("click", () => render());
+  //   playerList.replaceChildren(details);
 };
 
 /* === RENDER NEW PLAYERS USING DOM from FORM ===
@@ -275,8 +296,9 @@ const renderNewPlayerForm = () => {
   //   }
   // } catch (err){
   //   console.error("Uh oh, trouble rendering the new player form!", err);
-    // === EVENT LISTENER ===
-  // should this be inside here
+
+  // === EVENT LISTENER ===
+  // should this be here
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
@@ -289,13 +311,9 @@ const renderNewPlayerForm = () => {
     };
     await addNewPlayer(playerData);
     form.reset();
-    console.log("New Player Data:", playerData);
+    console.log("New Player Data entered:", playerData);
   });
 };
-
-
-
-
 
 /**
  * Initializes the app by fetching all players and rendering them to the DOM.
@@ -305,13 +323,13 @@ const init = async () => {
   renderNewPlayerForm();
 };
 
-// this is related to fetchAllPlayers
+// used to refresh the player list displayed on the page.
+// It may be called multiple times after player data is modified
+// (for example, after adding or removing a player).
 
 async function render() {
-  await fetchAllPlayers();
+  await fetchAllPlayers(); // you are invoking the function here
   renderAllPlayers();
-// you are invoking the function here
-  // you can see it logged in the console alongside line 22
 }
 
 // fetchAllPlayers will send a request to fetch the data
@@ -332,5 +350,5 @@ if (typeof window === "undefined") {
     renderNewPlayerForm,
   };
 } else {
-  render();
+  init();
 }

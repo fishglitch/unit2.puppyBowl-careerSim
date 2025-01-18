@@ -1,28 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="styles.css" />
-    <title>PuppyBowl</title>
-  </head>
-  <body>
-    <header>
-      <h1>Puppy Bowl Players</h1>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="styles.css" />
+  <title>Puppies x 127.0.0.1</title>
+</head>
+
+<body>
+  
+  <header>
+    <h1>Puppy Bowl Players | @ 127.0.0.1 Stadium</h1>
   </header>
   <form id="new-player-form">
     <label for="name">Name:</label>
-    <input type="text" id="name" name="name"/>
+    <input type="text" id="name" name="name" />
     <label for="breed">Breed:</label>
-    <input type="text" id="breed" name="breed"/>
+    <input type="text" id="breed" name="breed" />
+    <label for="url">Image URL:</label>
+    <input type="text" img url="" />
     <select name="status" id="status">
       <option value="field">Field</option>
       <option value="bench">Bench</option>
     </select>
-    <input img url=""/>
-    <input type="submit" id="submit"/>
+    <select name="team" id="team">
+      <option value="unassigned"></option>
+      <option value="ruff">Ruff</option>
+      <option value="fluff">Fluff</option>
+    </select>
+    
+    <input type="submit" id="submit" />
   </form>
-    <script src="./script2.js"></script>
-  </body>
+  <main>
+    <article id="playerList"></article>
+  </main>
+  <script src="./script copy.js"></script>
+</body>
+
 </html>

@@ -6,7 +6,7 @@ const {
   renderAllPlayers,
   renderSinglePlayer,
   renderNewPlayerForm,
-} = require("./script2");
+} = require("./script");
 
 describe("fetchAllPlayers", () => {
   // Make the API call once before all the tests run

@@ -4,9 +4,8 @@
   box-sizing: border-box;
 }
 
-
 * {
-  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif
+  font-family: monospace;
   font-weight: 400;
 }
 
@@ -21,11 +20,14 @@ h1 {
 
 body {
   margin: 20px 5%; /* Adjusted the side margins to be responsive */
-  background-image: linear-gradient(
+  background-image: url('https://happywall-img-gallery.imgix.net/60780/pastel_color_paw_prints_with_white_background_masked.jpg'), linear-gradient(
     rgb(155, 221, 245),
     white,
     rgb(155, 221, 245)
   );
+  background-repeat: repeat; /* Repeats the background image */
+  background-size: auto; /* Can also be set to 'cover' or 'contain' based on requirement */
+  background-position: center; /* Centers the background */
 }
 
 form {
