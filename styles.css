@@ -32,7 +32,18 @@ body {
 
 div {
   background-color: rgb(255, 242, 198);
+  border-radius: 40px;
   padding: 3vw;
+  display: flex; /* button positioning */
+  flex-direction: column; /* Stack children vertically */
+  justify-content: space-between; /* Space out children */
+  transition: background-color 0.3s, transform 0.3s; /* Smooth transition */
+}
+
+/* Change background color and enlarge on hover */
+div:hover {
+  background-color: rgb(255, 220, 180); /* Change to the desired hover color */
+  transform: scale(1.05); /* Slightly enlarge the div */
 }
 
 form {
@@ -73,7 +84,7 @@ article {
   display: flex;
   flex-flow: row wrap;
   justify-content: space-evenly;
-  gap: 10px;
+  gap: 30px;
   margin: 0 auto; /* Center content */
 }
 
