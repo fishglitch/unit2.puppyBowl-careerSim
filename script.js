@@ -53,7 +53,7 @@ const fetchAllPlayers = async () => {
     // return state.players
     // */
 
-    console.log("Players to render:", state.players);
+    // console.log("Players to render:", state.players);
   } catch (err) {
     console.error("Uh oh, trouble fetching players!", err);
   }
@@ -180,7 +180,7 @@ in my Party Planner code, I had injected an 'onclick' attribute
 summary: 
 */
 
-function renderAllPlayers(players) {
+function renderAllPlayers(player) {
   playerList.innerHTML = ""; // Clear previous content
 
   if (!state.players || state.players.length === 0) {
@@ -210,7 +210,7 @@ function renderAllPlayers(players) {
     image.style.height = "auto";
 
     playerCard.appendChild(image);
-    console.log("show image:", player.name, image.src);
+    // console.log("show image:", player.name, image.src);
 
     // <img src=${player.image} ${player.name}/>
 
@@ -267,7 +267,7 @@ const renderSinglePlayer = (player) => {
       <p>Player Status: ${player.status}<p>
       <p>Team ID: ${player.teamId}</p>
   `;
-  // Image Set Up:
+  // Image for display single player
   const image = document.createElement("img");
   //set the img src to be the imageUrl from the player object
   image.src = player.imageUrl;
@@ -279,6 +279,7 @@ const renderSinglePlayer = (player) => {
   details.append(backButton);
   backButton.addEventListener("click", () => render());
   playerList.replaceChildren(details);
+  console.log("single image", image);
 };
 
 /* === RENDER NEW PLAYERS USING DOM from FORM ===
