@@ -1,12 +1,10 @@
 // debugging for OSH
 // function renderAllPlayers(players): players is declared but its value is never read.
-// players cause my function to not render, so I instead am using state.players. 
+// players cause my function to not render, so I instead am using state.players.
 // image urls not rendering, only default images.
-// urls are submitted on form, but imageUrl id in array shows default image to be rendered. 
-// is the url getting replaced, do i need to do a conversion 
+// urls are submitted on form, but imageUrl id in array shows default image to be rendered.
+// is the url getting replaced, do i need to do a conversion
 // whatever i wrote, the url format is not being identified by the API so the default image is instead passed.
-
-
 
 // Use the API_URL variable to make fetch requests to the API.
 // Replace the placeholder with your cohort name (ex: 2109-UNF-HY-WEB-PT)
@@ -198,7 +196,14 @@ function renderAllPlayers(players) {
         <p>Player Status: ${player.status}<p>
         <p>Team ID: ${player.teamId}</p>
     `;
-
+    // eventListener button click for PLAYER DETAILS
+    const buttonDetails = document.createElement("button");
+    buttonDetails.innerText = "Player Details";
+    playerCard.appendChild(buttonDetails);
+    buttonDetails.addEventListener("click", async () => {
+      await fetchSinglePlayer(player.id);
+      renderSinglePlayer(state.player);
+    });
     // == create image element for player's image ==
     const image = document.createElement("img");
     // i don't think this line below does anything useful
@@ -213,21 +218,17 @@ function renderAllPlayers(players) {
 
     // <img src=${player.image} ${player.name}/>
 
-    // eventListener button click for PLAYER DETAILS
-    const buttonDetails = document.createElement("button");
-    buttonDetails.innerText = "Player Details";
-    playerCard.appendChild(buttonDetails);
-    buttonDetails.addEventListener("click", async () => {
-      await fetchSinglePlayer(player.id);
-      renderSinglePlayer(state.player);
-    });
-
     // event Listener Delete Button for PLAYER DETAILS
     const deleteButton = document.createElement("button");
     deleteButton.innerText = "Delete Player";
     playerCard.append(deleteButton);
-    deleteButton.addEventListener("click", () => removePlayer(player.id));
-    // console.log("Deleted player:", player.name, player.id);
+    deleteButton.addEventListener("click", () => {
+      const confirmDelete = confirm(`Are you sure you want to delete ${player.name}?`)
+      if (confirmDelete) {
+        removePlayer(player.id);
+      }
+    });
+    console.log("Deleted player:", player.name, player.id);
 
     // append playerCard to the playerList
     playerList.appendChild(playerCard);
@@ -239,7 +240,6 @@ function renderAllPlayers(players) {
     // console.log("Players rendered:", playerCard);
   });
   // this console.log checks that function works
-  
 
   //// moved this DOM inside renderAllPlayers loop subfunction, console here is inactive
   // console.log("Card to show:", playerCard.innerHTML);
@@ -363,7 +363,6 @@ form.addEventListener("submit", async (event) => {
   console.log("New Player Data entered:", playerData);
   await addNewPlayer(playerData);
   form.reset();
-  
 });
 
 /** === INITIALIZE ===
@@ -385,7 +384,6 @@ async function render() {
 
 // fetchAllPlayers will send a request to fetch the data
 render();
-
 
 /** === SCRIPT FOR NODE WHEN TESTING ===
  * This script will be run using Node when testing, so here we're doing a quick

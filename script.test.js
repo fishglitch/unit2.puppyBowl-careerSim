@@ -1,3 +1,4 @@
+/* this imports script.js functions */ 
 const {
   fetchAllPlayers,
   fetchSinglePlayer,
@@ -8,15 +9,19 @@ const {
   renderNewPlayerForm,
 } = require("./script");
 
+/** below are Jest's testing framework/ describe() can contain one or more test()
+ * 
+ * this block below groups all tests related to the fetchAllPlayers function
+*/
 describe("fetchAllPlayers", () => {
   // Make the API call once before all the tests run
   let players;
   beforeAll(async () => {
     players = await fetchAllPlayers();
   });
-
+// see if it makes a diff: i capitalized the "A" in the first array word; was lower case by default.
   test("returns an array", async () => {
-    expect(array.isArray(players)).toBe(true);
+    expect(Array.isArray(players)).toBe(true);
   });
 
   test("returns players with name and id", async () => {
@@ -30,11 +35,15 @@ describe("fetchAllPlayers", () => {
 // TODO: Tests for `fetchSinglePlayer`
 describe("fetchSinglePlayer", () => {
   let player;
+  const testId = playerId;
+
   beforeAll(async () => {
-    player = await fetchSinglePlayer();
+    player = await fetchSinglePlayer(testId);
   });
-  test("returns an array", async () => {
-    expect(Object.isObject(player)).toBe(true);
+
+  // changed below from Object.isObject(player)
+  test("returns an object", async () => {
+    expect(typeof player).toBe(Object);
   });
   test("returns player with name, id, breed, image, team", async () => {
     player.forEach((player) => {
@@ -54,6 +63,9 @@ describe("addNewPlayer", () => {
   const player = {
     name: "Test",
     breed: "Test Breed",
+    imageUrl: "test-image-url",
+    status: "field", 
+    team: "unassigned",
   };
   beforeAll(async () => {
     await addNewPlayer(player);
@@ -77,11 +89,11 @@ describe("removePlayer", () => {
     breed: "test breed",
   };
   beforeAll(async () => {
-    await removePlayer(player);
+    await removePlayer(player.name);
     players = await fetchAllPlayers();
   });
-  test("is player still there?", async () => {
-    expect(players).toEqual(
+  test("is player removed?", async () => {
+    expect(players).not.toEqual(
       expect.arrayContaining([
         ex[expect.objectContaining({ name: player.name })],
       ])
