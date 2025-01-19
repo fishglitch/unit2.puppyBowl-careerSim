@@ -1,3 +1,14 @@
+// debugging for OSH
+// function renderAllPlayers(players): players is declared but its value is never read.
+// players cause my function to not render, so I instead am using state.players. 
+// image urls not rendering, only default images.
+// urls are submitted on form, but imageUrl id in array shows default image to be rendered. 
+// is the url getting replaced, do i need to do a conversion 
+// whatever i wrote, the url format is not being identified by the API so the default image is instead passed.
+// i also need a space between the player detail and delete player buttons.
+
+
+
 // Use the API_URL variable to make fetch requests to the API.
 // Replace the placeholder with your cohort name (ex: 2109-UNF-HY-WEB-PT)
 const cohortName = "2409-GHP-ET-WEB-PT";
@@ -11,8 +22,8 @@ const state = {
 };
 
 // === REFERENCES ===
+const playerList = document.getElementById("playerList"); // <main><article>
 const form = document.getElementById("new-player-form");
-const main = document.getElementById("playerList"); // <main><article>
 
 /** === FETCH ALL PLAYERS FROM API ===
  * @returns {Object[]} the array of player objects
@@ -23,14 +34,26 @@ const fetchAllPlayers = async () => {
     // why do we nest if throw in try catch?
     const response = await fetch(`${API_URL}/players`);
     const result = await response.json();
-    // console.log(result); // this fetches the sample response in the API
+    // console.log("fetched result", result);
+    // this fetches the sample response in the API, but redundant
 
     if (!response.ok) {
       // what is diff bet response.ok and success?
-      throw new Error(result.error);
+      throw new Error(result.error || "Failed to fetch players");
     }
-    state.players = result.players; // returns the array that has puppy data
-    renderAllPlayers();
+
+    state.players = result.data.players;
+    /* == comments and extraneous expressions == 
+    / above returns the array with puppy data
+    / result.data.players -- works bc state assignment
+    / return response.data.players -- does not work, why?
+
+    // ! Do we need these two (below) here?? Or anywhere? !
+    // renderAllPlayers();
+    // return state.players
+    // */
+
+    console.log("Players to render:", state.players);
   } catch (err) {
     console.error("Uh oh, trouble fetching players!", err);
   }
@@ -50,7 +73,7 @@ const fetchSinglePlayer = async (playerId) => {
     });
     const response = await promise.json();
     state.player = response.data.player;
-    console.log(response);
+    console.log("single player fetched", response.data.player);
   } catch (err) {
     console.error(`Oh no, trouble fetching player #${playerId}!`, err);
   }
@@ -70,17 +93,22 @@ const addNewPlayer = async (playerObj) => {
       body: JSON.stringify(playerObj),
     });
 
-    if (!response.ok){
-      throw new Error ("Cannot add new player", error);
+    if (!response.ok) {
+      throw new Error("Cannot add new player", error);
     }
-    
-    await fetchAllPlayers();
+    // == add new player, fetch all players using await and render ==
+    await fetchAllPlayers(); // make sure await is here, or else:
+    /* if await is removed,
+    / the page will not automatically refresh or update to show the rendered player card
+    / after adding a new player, even if console log shows new player data is correctly processed.
+    */
+    renderAllPlayers(state.players);
   } catch (err) {
     console.error("Oops, something went wrong with adding that player!", err);
   }
 };
 
-/** === REMOVE SINGLE PLAYER FROM ROSTER VIA API === 
+/** === REMOVE SINGLE PLAYER FROM ROSTER VIA API ===
  * @param {number} playerId the ID of the player to remove
  */
 const removePlayer = async (playerId) => {
@@ -94,7 +122,18 @@ const removePlayer = async (playerId) => {
         },
       }
     );
-    console.log(result);
+    /* Code below added to fix a similar error in encountered PartyPlanner:
+    - at the event I click "Delete Player", console.error (line 120~) shows
+    - I would have to manually refresh page to show updated render with deleted player.
+
+    */
+    if (response.status === 204) {
+      console.log("Successfully deleted player:", playerId);
+      fetchAllPlayers();
+      renderAllPlayers();
+      return;
+    }
+    console.log("remove player", response);
     render();
   } catch (err) {
     console.error(
@@ -105,9 +144,6 @@ const removePlayer = async (playerId) => {
 };
 
 // FETCH TEAM IDs from API
-
-// EVENT LISTENER here?
-
 
 // == RENDERS ===
 /** === RENDER ALL PLAYERS <main> ===
@@ -128,39 +164,88 @@ const removePlayer = async (playerId) => {
  *
  * Note: this function should replace the current contents of `<main>`, not append to it.
  * @param {Object[]} playerList - an array of player objects
- * 
+ *
  * fishglitch's notes:
  * <main> is the main content of the page
  * <article> is a specific self contained piece of content
  * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/article
  */
+/* == notes on .innerHTML vs. eventListener created with doc.createElement
+.innerHTML is not a DOM method, it is a DOM property to get/set HTML element content.
+risks associated with HTML injection if not properly sanitized.
+direct DOM manipulation mitigates risks bc elements incrementally updated.
+in my Party Planner code, I had injected an 'onclick' attribute 
+  directly in the button's HTML string.
 
-const renderAllPlayers = () => {
-  main.innerHTML = ""; // Clear previous content
-  
-  if (state.players.length === 0) {
-    main.innerHTML = "<p>No players found.</p>";
+summary: 
+*/
+
+function renderAllPlayers(players) {
+  playerList.innerHTML = ""; // Clear previous content
+
+  if (!state.players || state.players.length === 0) {
+    playerList.innerHTML = "<p>No players found :(</p>";
     return;
   }
-  const playersHTML = state.players
-    .map(
-      (player) => `
-      <li>
-        <div>
-          <h1>${player.name}</h1>
-          <h2>${player.breed}</h2>
-          <p>${player.status}</p>
-          <p>${player.team}</p>
-          <button id="${player.id}" onclick="deletePlayer(${player.id})">Delete!</button>
-        </div>
-      </li>
-    `
-    )
-    .join("");
 
-  main.innerHTML = playersHTML;
-};
+  // loop through each player to create puppy card
+  const playersHTML = state.players.map((player) => {
+    // console.log("map", player);
+    const playerCard = document.createElement("div");
+
+    playerCard.innerHTML = `
+        <h1>${player.name}</h1>
+        <p>Player ID: ${player.id}</p>
+        <p>Player Status: ${player.status}<p>
+        <p>Team ID: ${player.teamId}</p>
+    `;
+
+    // == create image element for player's image ==
+    const image = document.createElement("img");
+    // i don't think this line below does anything useful
+    // const imageUrl = document.getElementById('url').value;
+    image.src = player.imageUrl;
+    image.alt = player.name;
+    image.style.width = "100px";
+    image.style.height = "auto";
+
+    playerCard.appendChild(image);
+    console.log("show image:", player.name, image.src);
+
+    // <img src=${player.image} ${player.name}/>
+
+    // eventListener button click for PLAYER DETAILS
+    const buttonDetails = document.createElement("button");
+    buttonDetails.innerText = "Player Details";
+    playerCard.appendChild(buttonDetails);
+    buttonDetails.addEventListener("click", async () => {
+      await fetchSinglePlayer(player.id);
+      renderSinglePlayer(state.player);
+    });
+
+    // event Listener Delete Button for PLAYER DETAILS
+    const deleteButton = document.createElement("button");
+    deleteButton.innerText = "Delete Player";
+    playerCard.append(deleteButton);
+    deleteButton.addEventListener("click", () => removePlayer(player.id));
+    // console.log("Deleted player:", player.name, player.id);
+
+    // append playerCard to the playerList
+    playerList.appendChild(playerCard);
+
+    // console.log("Card to show:", playerCard.innerHTML);
+    // return playerCard;
+
+    //
+    // console.log("Players rendered:", playerCard);
+  });
+  // this console.log checks that function works
   
+
+  //// moved this DOM inside renderAllPlayers loop subfunction, console here is inactive
+  // console.log("Card to show:", playerCard.innerHTML);
+}
+
 /* junk code to review if needed
   // 
   // playerList.forEach((player) => {
@@ -189,29 +274,25 @@ const renderAllPlayers = () => {
  * @param {Object} player an object representing a single player
  */
 const renderSinglePlayer = (player) => {
-//   const details = document.createElement("section");
-//   details.innerHTML = `
-//   <h3>${player.name}</h3>
-//    <p>Player ID: ${player.id} </p>
-//     <p>Player Status: ${player.status}<p>
-//     <p>Team ID: ${player.teamId}</p>
-   
-// `;
-
-//   // Image Set Up:
-//   const image = document.createElement("img");
-//   //set the img src to be the imageUrl from the player object
-//   image.src = player.imageUrl;
-//   image.style.width = "50%";
-//   image.style.height = "50%";
-//   details.append(image);
-
-//   const backButton = document.createElement("button");
-//   backButton.innerText = "Back to Roster";
-//   details.append(backButton);
-//   backButton.addEventListener("click", () => render());
-
-//   playerList.replaceChildren(details);
+  const details = document.createElement("section");
+  details.innerHTML = `
+    <h3>${player.name}</h3>
+     <p>Player ID: ${player.id} </p>
+      <p>Player Status: ${player.status}<p>
+      <p>Team ID: ${player.teamId}</p>
+  `;
+  // Image Set Up:
+  const image = document.createElement("img");
+  //set the img src to be the imageUrl from the player object
+  image.src = player.imageUrl;
+  image.style.width = "50%";
+  image.style.height = "50%";
+  details.append(image);
+  const backButton = document.createElement("button");
+  backButton.innerText = "Back to Puppies";
+  details.append(backButton);
+  backButton.addEventListener("click", () => render());
+  playerList.replaceChildren(details);
 };
 
 /* === RENDER NEW PLAYERS USING DOM from FORM ===
@@ -275,27 +356,29 @@ const renderNewPlayerForm = () => {
   //   }
   // } catch (err){
   //   console.error("Uh oh, trouble rendering the new player form!", err);
-    // === EVENT LISTENER ===
-  // should this be inside here
-  form.addEventListener("submit", async (event) => {
-    event.preventDefault();
-
-    const playerData = {
-      name: form.elements.name.value,
-      breed: form.elements.breed.value,
-      image: form.elements.url.value,
-      status: form.elements.status.value,
-      team: form.elements.team.value,
-    };
-    await addNewPlayer(playerData);
-    form.reset();
-    console.log("New Player Data:", playerData);
-  });
 };
 
+/* === EVENT LISTENER submit for New Player Form ===
+  // when I took this out of the renderNewPlayerForm(), the following error was resolved:
+  the page would not automatically refresh after I added a new player to be rendered;
+  I have had to manually refresh my page myself. Now it it solved.
+  This was a similar error I encountered and resolved in the removePlayer()
+  */
+form.addEventListener("submit", async (event) => {
+  event.preventDefault();
 
-
-
+  const playerData = {
+    name: form.elements.name.value,
+    breed: form.elements.breed.value,
+    image: form.elements.url.value,
+    status: form.elements.status.value,
+    team: form.elements.team.value,
+  };
+  console.log("New Player Data entered:", playerData);
+  await addNewPlayer(playerData);
+  form.reset();
+  
+});
 
 /**
  * Initializes the app by fetching all players and rendering them to the DOM.
@@ -305,21 +388,23 @@ const init = async () => {
   renderNewPlayerForm();
 };
 
-// this is related to fetchAllPlayers
+// used to refresh the player list displayed on the page.
+// It may be called multiple times after player data is modified
+// (for example, after adding or removing a player).
 
 async function render() {
-  await fetchAllPlayers();
+  await fetchAllPlayers(); // you are invoking the function here
   renderAllPlayers();
-// you are invoking the function here
-  // you can see it logged in the console alongside line 22
 }
 
 // fetchAllPlayers will send a request to fetch the data
 render();
 
-// This script will be run using Node when testing, so here we're doing a quick
-// check to see if we're in Node or the browser, and exporting the functions
-// we want to test if we're in Node.
+/** === SCRIPT FOR NODE WHEN TESTING ===
+ * This script will be run using Node when testing, so here we're doing a quick
+ * check to see if we're in Node or the browser, and exporting the functions
+ * we want to test if we're in Node.
+ */
 
 if (typeof window === "undefined") {
   module.exports = {
@@ -332,5 +417,5 @@ if (typeof window === "undefined") {
     renderNewPlayerForm,
   };
 } else {
-  render();
+  init();
 }
