@@ -246,20 +246,6 @@ function renderAllPlayers(players) {
   // console.log("Card to show:", playerCard.innerHTML);
 }
 
-/* junk code to review if needed
-  // 
-  // playerList.forEach((player) => {
-  //   const playerCard = document.createElement("div");
-  //   playerCard.classList.add("player-card");
-  //   playerCard.innerHTML = `
-  //     <h3>${player.name}</h3>
-  //     <img src="${player.image}" alt="${player.name}" />
-  //     <button onclick="renderSinglePlayer(${player.id})">See details</button>
-  //     <button onclick="removePlayer(${player.id})">Remove from roster</button>
-  //   `;
-  //   main.appendChild(playerCard);
-  // });
-*/
 /** === DISPLAY SINGLE PLAYER <main> ===
  * Updates `<main>` to display a single player.
  * The player is displayed in a card with the following information:
@@ -380,7 +366,7 @@ form.addEventListener("submit", async (event) => {
   
 });
 
-/**
+/** === INITIALIZE ===
  * Initializes the app by fetching all players and rendering them to the DOM.
  */
 const init = async () => {
@@ -399,6 +385,7 @@ async function render() {
 
 // fetchAllPlayers will send a request to fetch the data
 render();
+
 
 /** === SCRIPT FOR NODE WHEN TESTING ===
  * This script will be run using Node when testing, so here we're doing a quick

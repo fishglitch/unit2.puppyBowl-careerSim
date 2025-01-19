@@ -1,3 +1,14 @@
+// debugging for OSH
+// function renderAllPlayers(players): players is declared but its value is never read.
+// players cause my function to not render, so I instead am using state.players. 
+// image urls not rendering, only default images.
+// urls are submitted on form, but imageUrl id in array shows default image to be rendered. 
+// is the url getting replaced, do i need to do a conversion 
+// whatever i wrote, the url format is not being identified by the API so the default image is instead passed.
+// i also need a space between the player detail and delete player buttons.
+
+
+
 // Use the API_URL variable to make fetch requests to the API.
 // Replace the placeholder with your cohort name (ex: 2109-UNF-HY-WEB-PT)
 const cohortName = "2409-GHP-ET-WEB-PT";
@@ -179,7 +190,7 @@ function renderAllPlayers(players) {
 
   // loop through each player to create puppy card
   const playersHTML = state.players.map((player) => {
-    console.log("map", player);
+    // console.log("map", player);
     const playerCard = document.createElement("div");
 
     playerCard.innerHTML = `
@@ -199,7 +210,7 @@ function renderAllPlayers(players) {
     image.style.height = "auto";
 
     playerCard.appendChild(image);
-    console.log("show image:", image);
+    console.log("show image:", player.name, image.src);
 
     // <img src=${player.image} ${player.name}/>
 
@@ -217,16 +228,16 @@ function renderAllPlayers(players) {
     deleteButton.innerText = "Delete Player";
     playerCard.append(deleteButton);
     deleteButton.addEventListener("click", () => removePlayer(player.id));
-    console.log("Deleted:", player.id);
+    // console.log("Deleted player:", player.name, player.id);
 
     // append playerCard to the playerList
     playerList.appendChild(playerCard);
 
-    console.log("Card to show:", playerCard.innerHTML);
+    // console.log("Card to show:", playerCard.innerHTML);
     // return playerCard;
 
     //
-    console.log("Players rendered:", playerCard);
+    // console.log("Players rendered:", playerCard);
   });
   // this console.log checks that function works
   
@@ -363,9 +374,10 @@ form.addEventListener("submit", async (event) => {
     status: form.elements.status.value,
     team: form.elements.team.value,
   };
+  console.log("New Player Data entered:", playerData);
   await addNewPlayer(playerData);
   form.reset();
-  console.log("New Player Data entered:", playerData);
+  
 });
 
 /**
