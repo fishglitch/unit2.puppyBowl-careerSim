@@ -52,7 +52,7 @@ const fetchAllPlayers = async () => {
     // return state.players
     // */
 
-    // console.log("Players to render:", state.players);
+    console.log("Players to render:", state.players);
   } catch (err) {
     console.error("Uh oh, trouble fetching players!", err);
   }
@@ -179,7 +179,7 @@ in my Party Planner code, I had injected an 'onclick' attribute
 summary: 
 */
 
-function renderAllPlayers(player) {
+function renderAllPlayers(players) {
   playerList.innerHTML = ""; // Clear previous content
 
   if (!state.players || state.players.length === 0) {
@@ -189,7 +189,7 @@ function renderAllPlayers(player) {
 
   // loop through each player to create puppy card
   const playersHTML = state.players.map((player) => {
-    // console.log("map", player);
+    console.log("map", player);
     const playerCard = document.createElement("div");
 
     playerCard.innerHTML = `
@@ -356,7 +356,7 @@ form.addEventListener("submit", async (event) => {
   const playerData = {
     name: form.elements.name.value,
     breed: form.elements.breed.value,
-    image: form.elements.imageUrl.value,
+    imageUrl: form.elements.imageUrl.value,
     status: form.elements.status.value,
     team: form.elements.team.value,
   };

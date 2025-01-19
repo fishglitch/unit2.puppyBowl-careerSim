@@ -93,17 +93,18 @@ section {
   flex-direction: column;
   justify-content: space-between;
   border: 1px solid rgb(98, 100, 215);
+  background-color:  rgb(255, 242, 198);
   border-radius: 10px;
   width: 100%; /* for responsiveness */
   max-width: 300px; /* to ensure sections don't stretch too much */
-  padding: 15px;
+  padding: 10px;
   margin: 10px;
 }
 
 img {
   max-width: 100%;
   height: auto; /* Ensures images maintain aspect ratio */
-  border-radius: 50%;
+  border-radius: 20%;
   margin: auto; /* Centers the image */
   padding: 10px; /* Less padding to fit the design */
 }
