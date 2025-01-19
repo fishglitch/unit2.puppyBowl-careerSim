@@ -5,7 +5,6 @@
 // urls are submitted on form, but imageUrl id in array shows default image to be rendered. 
 // is the url getting replaced, do i need to do a conversion 
 // whatever i wrote, the url format is not being identified by the API so the default image is instead passed.
-// i also need a space between the player detail and delete player buttons.
 
 
 
@@ -128,8 +127,8 @@ const removePlayer = async (playerId) => {
 
     */
     if (response.status === 204) {
-      console.log("Successfully deleted player:", playerId);
-      fetchAllPlayers();
+      // console.log("Successfully deleted player:", playerId);
+      await fetchAllPlayers();
       renderAllPlayers();
       return;
     }
@@ -323,7 +322,7 @@ const renderNewPlayerForm = () => {
     <label for="url">Image URL:</label>
     <input 
       type="text"
-      id="url"
+      id="imageUrl"
       name="url"
       placeholder="Puppy URL Image"
       />
@@ -357,7 +356,7 @@ form.addEventListener("submit", async (event) => {
   const playerData = {
     name: form.elements.name.value,
     breed: form.elements.breed.value,
-    image: form.elements.url.value,
+    image: form.elements.imageUrl.value,
     status: form.elements.status.value,
     team: form.elements.team.value,
   };
