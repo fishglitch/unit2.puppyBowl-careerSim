@@ -127,7 +127,7 @@ const removePlayer = async (playerId) => {
     if (response.status === 204) {
       // console.log("Successfully deleted player:", playerId);
       await fetchAllPlayers();
-      renderAllPlayers();
+      renderAllPlayers(state.players);
       return;
     }
     console.log("remove player", response);
@@ -177,7 +177,7 @@ in my Party Planner code, I had injected an 'onclick' attribute
 summary: 
 */
 
-function renderAllPlayers(players) {
+function renderAllPlayers() {
   playerList.innerHTML = ""; // Clear previous content
 
   if (!state.players || state.players.length === 0) {
@@ -379,7 +379,7 @@ const init = async () => {
 
 async function render() {
   await fetchAllPlayers(); // you are invoking the function here
-  renderAllPlayers();
+  renderAllPlayers(state.players);
 }
 
 // fetchAllPlayers will send a request to fetch the data
