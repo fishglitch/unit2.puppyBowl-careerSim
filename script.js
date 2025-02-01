@@ -50,7 +50,7 @@ const fetchAllPlayers = async () => {
     // return state.players
     // */
 
-    console.log("Players to render:", state.players);
+    // console.log("Players to render:", state.players);
   } catch (err) {
     console.error("Uh oh, trouble fetching players!", err);
   }
@@ -70,7 +70,7 @@ const fetchSinglePlayer = async (playerId) => {
     });
     const response = await promise.json();
     state.player = response.data.player;
-    console.log("single player fetched", response.data.player);
+    // console.log("single player fetched", response.data.player);
   } catch (err) {
     console.error(`Oh no, trouble fetching player #${playerId}!`, err);
   }
@@ -130,7 +130,7 @@ const removePlayer = async (playerId) => {
       renderAllPlayers(state.players);
       return;
     }
-    console.log("remove player", response);
+    // console.log("remove player", response);
     render();
   } catch (err) {
     console.error(
@@ -187,7 +187,7 @@ function renderAllPlayers() {
 
   // loop through each player to create puppy card
   const playersHTML = state.players.map((player) => {
-    console.log("map", player);
+    // console.log("map", player);
     const playerCard = document.createElement("div");
 
     playerCard.innerHTML = `
@@ -228,7 +228,7 @@ function renderAllPlayers() {
         removePlayer(player.id);
       }
     });
-    console.log("Deleted player:", player.name, player.id);
+    // console.log("Deleted player:", player.name, player.id);
 
     // append playerCard to the playerList
     playerList.appendChild(playerCard);
@@ -278,7 +278,7 @@ const renderSinglePlayer = (player) => {
   details.append(backButton);
   backButton.addEventListener("click", () => render());
   playerList.replaceChildren(details);
-  console.log("single image", image);
+  // console.log("single image", image);
 };
 
 /* === RENDER NEW PLAYERS USING DOM from FORM ===
@@ -360,7 +360,7 @@ form.addEventListener("submit", async (event) => {
     status: form.elements.status.value,
     team: form.elements.team.value,
   };
-  console.log("New Player Data entered:", playerData);
+  // console.log("New Player Data entered:", playerData);
   await addNewPlayer(playerData);
   form.reset();
 });
